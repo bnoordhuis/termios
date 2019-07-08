@@ -13,11 +13,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <err.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <termios.h>
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
@@ -27,6 +28,8 @@ struct flag
 	char name[16];
 	unsigned long flag;
 };
+
+char *progname = "termios";
 
 /* Keep the entries sorted alphabetically. */
 #define V(name) { #name, name }
@@ -97,6 +100,22 @@ struct flag c_lflag[] =
 #undef V
 
 void
+die(char *fmt, ...)
+{
+	va_list ap;
+	int err;
+
+	err = errno;
+	fprintf(stderr, "%s: ", progname);
+	va_start(ap, fmt);
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
+	fprintf(stderr, ": %s\n", strerror(err));
+	fflush(stderr);
+	exit(1);
+}
+
+void
 print(char *name, unsigned long flag, struct flag flags[], unsigned nflags)
 {
 	struct flag *p;
@@ -127,6 +146,8 @@ main(int argc, char **argv)
 	char *p, *q;
 	int fd;
 
+	progname = argv[0];
+
 	fd = 0;
 	if (argc > 1)
 	{
@@ -137,11 +158,11 @@ main(int argc, char **argv)
 			fd = open(p, O_RDONLY);
 
 		if (fd == -1)
-			err(1, "open(%s)", p);
+			die("open(%s)", p);
 	}
 
 	if (tcgetattr(fd, &t))
-		err(1, "tcgetattr");
+		die("tcgetattr");
 
 #define V(name) print(#name, t.name, name, ARRAY_SIZE(name))
 	V(c_iflag);
