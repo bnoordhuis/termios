@@ -25,7 +25,7 @@
 struct flag
 {
 	char name[16];
-	tcflag_t flag;
+	unsigned long flag;
 };
 
 /* Keep the entries sorted alphabetically. */
@@ -97,7 +97,7 @@ struct flag c_lflag[] =
 #undef V
 
 void
-print(char *name, tcflag_t flag, struct flag flags[], unsigned nflags)
+print(char *name, unsigned long flag, struct flag flags[], unsigned nflags)
 {
 	struct flag *p;
 	int fst;
@@ -155,8 +155,8 @@ main(int argc, char **argv)
 		printf("%s%u", &","[cc == t.c_cc], *cc);
 	printf("\n");
 
-	printf("c_ispeed\t%lu\n", t.c_ispeed);
-	printf("c_ospeed\t%lu\n", t.c_ospeed);
+	printf("c_ispeed\t%lu\n", (unsigned long) t.c_ispeed);
+	printf("c_ospeed\t%lu\n", (unsigned long) t.c_ospeed);
 
 	return 0;
 }
