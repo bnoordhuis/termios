@@ -97,6 +97,71 @@ struct flag c_lflag[] =
 	, V(XCASE)
 #endif
 };
+
+struct flag speeds[] =
+{
+	  V(B0)
+	, V(B50)
+	, V(B75)
+	, V(B110)
+	, V(B134)
+	, V(B150)
+	, V(B200)
+	, V(B300)
+	, V(B600)
+	, V(B1200)
+	, V(B1800)
+	, V(B2400)
+	, V(B4800)
+	, V(B9600)
+#ifdef B57600
+	, V(B57600)
+#endif
+#ifdef B115200
+	, V(B115200)
+#endif
+	, V(B19200)
+#ifdef B230400
+	, V(B230400)
+#endif
+	, V(B38400)
+#ifdef B460800
+	, V(B460800)
+#endif
+#ifdef B500000
+	, V(B500000)
+#endif
+#ifdef B57600
+	, V(B57600)
+#endif
+#ifdef B921600
+	, V(B921600)
+#endif
+#ifdef B1000000
+	, V(B1000000)
+#endif
+#ifdef B1152000
+	, V(B1152000)
+#endif
+#ifdef B1500000
+	, V(B1500000)
+#endif
+#ifdef B2000000
+	, V(B2000000)
+#endif
+#ifdef B2500000
+	, V(B2500000)
+#endif
+#ifdef B3000000
+	, V(B3000000)
+#endif
+#ifdef B3500000
+	, V(B3500000)
+#endif
+#ifdef B4000000
+	, V(B4000000)
+#endif
+};
 #undef V
 
 void
@@ -116,6 +181,21 @@ die(char *fmt, ...)
 }
 
 void
+printspeed(unsigned long flag, int fst, int speedonly)
+{
+	struct flag *p;
+
+	for (p = speeds; p < speeds + ARRAY_SIZE(speeds); p++)
+		if (flag == p->flag)
+		{
+			printf("%s%s", &"|"[fst], &p->name[speedonly]);
+			return;
+		}
+
+	printf("%s%lu", &"|"[fst], flag);
+}
+
+void
 print(char *name, unsigned long flag, struct flag flags[], unsigned nflags)
 {
 	struct flag *p;
@@ -132,8 +212,8 @@ print(char *name, unsigned long flag, struct flag flags[], unsigned nflags)
 			fst = 0;
 		}
 
-	if (flag)
-			printf("%s%#lx", &"|"[fst], flag);
+	if (flags == c_cflag)
+		printspeed(flag, fst, /* speedonly */ 0);
 
 	printf("\n");
 }
@@ -178,8 +258,8 @@ main(int argc, char **argv)
 
 	/* Not all platforms support c_ispeed and c_ospeed. */
 #ifndef _AIX
-	printf("c_ispeed\t%lu\n", (unsigned long) t.c_ispeed);
-	printf("c_ospeed\t%lu\n", (unsigned long) t.c_ospeed);
+	printf("c_ispeed\t"); printspeed(t.c_ispeed, 1, 1); printf("\n");
+	printf("c_ospeed\t"); printspeed(t.c_ospeed, 1, 1); printf("\n");
 #endif
 
 	return 0;
