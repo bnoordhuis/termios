@@ -1,8 +1,6 @@
 CFLAGS = -Wall -Wextra
 
-.PHONY: all
-all: termios
+termios: termios.c
 
-.PHONY: clean
-clean:
-	$(RM) termios
+clean::
+	rm -f termios
