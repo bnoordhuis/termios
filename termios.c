@@ -100,8 +100,7 @@ struct flag c_lflag[] =
 
 struct flag speeds[] =
 {
-	  V(B0)
-	, V(B50)
+	  V(B50)
 	, V(B75)
 	, V(B110)
 	, V(B134)
@@ -213,7 +212,8 @@ print(char *name, unsigned long flag, struct flag flags[], unsigned nflags)
 		}
 
 	if (flags == c_cflag)
-		printspeed(flag, fst, /* speedonly */ 0);
+		if (flag)
+			printspeed(flag, fst, /* speedonly */ 0);
 
 	printf("\n");
 }
