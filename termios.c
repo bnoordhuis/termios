@@ -176,8 +176,11 @@ main(int argc, char **argv)
 		printf("%s%u", &","[cc == t.c_cc], *cc);
 	printf("\n");
 
+	/* Not all platforms support c_ispeed and c_ospeed. */
+#ifndef _AIX
 	printf("c_ispeed\t%lu\n", (unsigned long) t.c_ispeed);
 	printf("c_ospeed\t%lu\n", (unsigned long) t.c_ospeed);
+#endif
 
 	return 0;
 }
